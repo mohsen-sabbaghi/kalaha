@@ -23,7 +23,7 @@ public class Board {
     }
 
     public Pit getPit(final int index) {
-        return pits.get(index-1);
+        return this.pits.get((index - 1) % Board.PIT_END_INDEX);
     }
 
     public int getStoneCount(final Player player, final boolean includeHouse) {
