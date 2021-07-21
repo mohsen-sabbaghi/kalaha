@@ -17,18 +17,22 @@ public class Board {
 
     public Board() {
         pits = new ArrayList<>(PIT_END_INDEX);
-        for (int i = PIT_START_INDEX; i <=PIT_END_INDEX ; i++) {
+        for (int i = PIT_START_INDEX; i <= PIT_END_INDEX; i++) {
             pits.add(new Pit(i));
         }
     }
 
     public Pit getPit(final int index) {
+//        % Board.PIT_END_INDEX in order to make return to first index in case of upper 14 indices
         return this.pits.get((index - 1) % Board.PIT_END_INDEX);
     }
-
     public int getStoneCount(final Player player, final boolean includeHouse) {
-        return this.getPits().stream()
-                .filter(pit -> (pit.getOwner().equals(player) && (includeHouse || !pit.isHouse())))
-                .mapToInt(Pit::getStoneCount).sum();
+        int sum = 0;
+        for (Pit pit : pits) {
+            if (pit.getOwner().equals(player) && (includeHouse || !pit.isHouse())) {
+                sum += pit.getStoneCount();
+            }
+        }
+        return sum;
     }
 }

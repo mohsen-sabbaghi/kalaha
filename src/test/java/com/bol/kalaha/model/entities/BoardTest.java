@@ -24,6 +24,10 @@ public class BoardTest {
         final Pit givenPit = givenBoard.getPit(4);
         final Pit givenPit2 = givenBoard.getPit(13);
 
+        for (int i = 1; i <=14 ; i++) {
+            System.err.println(givenBoard.getPit(i));
+        }
+
         Assert.assertNotNull(givenPit);
         Assert.assertEquals(4, givenPit.getId());
 
