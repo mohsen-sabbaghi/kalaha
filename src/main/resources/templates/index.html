@@ -2,9 +2,213 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Kalaha Game</title>
+    <title>Kalah Game</title>
+    <script src="webjars/jquery/3.3.1-1/jquery.js"></script>
+    <style>
+        .welcome-text {
+            text-align: center
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+        }
+
+        .house-pit {
+            color: crimson;
+            font-weight: bold;
+        }
+
+        .ball {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            margin: 0 0 4px 0;
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle at 50% 120%, #323232, #0a0a0a 80%, #000000 100%);
+        }
+
+        .ball:before {
+            content: "";
+            position: absolute;
+            background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            bottom: 2.5%;
+            left: 5%;
+            opacity: 0.6;
+            height: 100%;
+            width: 90%;
+            -webkit-filter: blur(5px);
+            z-index: 2;
+        }
+
+        .ball:after {
+            width: 100%;
+            height: 100%;
+            content: "";
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8) 14%, rgba(255, 255, 255, 0) 24%);
+            -webkit-transform: translateX(-80px) translateY(-90px) skewX(-20deg);
+            -moz-transform: translateX(-80px) translateY(-90px) skewX(-20deg);
+            -ms-transform: translateX(-80px) translateY(-90px) skewX(-20deg);
+            -o-transform: translateX(-80px) translateY(-90px) skewX(-20deg);
+            transform: translateX(-80px) translateY(-90px) skewX(-20deg);
+            -webkit-filter: blur(10px);
+        }
+
+        .ball .shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0) 50%);
+            -webkit-transform: rotateX(90deg) translateZ(-150px);
+            -moz-transform: rotateX(90deg) translateZ(-150px);
+            -ms-transform: rotateX(90deg) translateZ(-150px);
+            -o-transform: rotateX(90deg) translateZ(-150px);
+            transform: rotateX(90deg) translateZ(-150px);
+            z-index: -1;
+        }
+
+        .stage {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            margin: 2px;
+            -webkit-perspective: 1200px;
+            -moz-perspective: 1200px;
+            -ms-perspective: 1200px;
+            -o-perspective: 1200px;
+            perspective: 1200px;
+            -webkit-perspective-origin: 50% 50%;
+            -moz-perspective-origin: 50% 50%;
+            -ms-perspective-origin: 50% 50%;
+            -o-perspective-origin: 50% 50%;
+            perspective-origin: 50% 50%;
+        }
+    </style>
 </head>
 <body>
-<h2>Welcome to Kalaha</h2>
+
+<h1 class="welcome-text" th:text="'Welcome to Kalah Game'">Kalah Game</h1>
+<p>New Game Created with ID: <span id="response"></span></p>
+
+<table>
+    <tr>
+        <td class="house-pit" id="14">P2-HOUSE<a href="#"></a></td>
+        <td colspan="7"></td>
+    </tr>
+
+    <tr id="player2">
+        <td></td>
+        <td id="13"><a data-initial-stone="6" href="#"></a></td>
+        <td id="12"><a data-initial-stone="6" href="#"></a></td>
+        <td id="11"><a data-initial-stone="6" href="#"></a></td>
+        <td id="10"><a data-initial-stone="6" href="#"></a></td>
+        <td id="9"><a data-initial-stone="6" href="#"></a></td>
+        <td id="8"><a data-initial-stone="6" href="#"></a></td>
+
+    </tr>
+    <tr id="player1">
+        <td></td>
+        <td id="1"><a data-initial-stone="6" href="#"></a></td>
+        <td id="2"><a data-initial-stone="6" href="#"></a></td>
+        <td id="3"><a data-initial-stone="6" href="#"></a></td>
+        <td id="4"><a data-initial-stone="6" href="#"></a></td>
+        <td id="5"><a data-initial-stone="6" href="#"></a></td>
+        <td id="6"><a data-initial-stone="6" href="#"></a></td>
+
+    </tr>
+
+    <tr>
+        <td colspan="7"></td>
+        <td class="house-pit" id="7">P1-HOUSE: <a href="#"></a></td>
+    </tr>
+</table>
+<br>
+<div class="result"></div>
+
+<script th:inline="javascript">
+    var CURRENT_GAME_ID;
+    var tableTD = $('td');
+    const ballHTML = '<section class="stage">\n' +
+        '  <figure class="ball">\n' +
+        '    <span class="shadow"></span>\n' +
+        '  </figure>\n' +
+        '</section>';
+
+    function initialGame() {
+        $.ajax({
+            url: 'http://localhost:8080/games',
+            type: 'post',
+            success: function (data) {
+                CURRENT_GAME_ID = data.id;
+                $("#response").html(CURRENT_GAME_ID)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        //Perform Ajax request.
+        initialGame();
+
+        tableTD.click(
+            function () {
+                $('td#' + $(this).attr('id')).each(function () {
+                    console.log($(this).attr('id'));
+                    // console.log($(this).text());
+                    updateScores($(this).attr('id'));
+                    updateStonesInPits()
+                });
+            }
+        );
+
+        updateStonesInPits();
+
+    });
+
+    function updateScores(id) {
+        $.ajax({
+            url: 'http://localhost:8080/games/' + CURRENT_GAME_ID + "/pits/" + id,
+            type: 'put',
+            dataType: "json",
+            success: function (data) {
+                // console.log(data.status)
+                $.each(data.status, function (i, item) {
+                    // console.log(i + ": ", item)
+                    // elem.find('a').data('initial-stone',item).html(item);
+                    $('td#' + i).find('a').data('initial-stone',item);
+                });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                // var errorMsg = 'Ajax request failed: ' + xhr.responseText;
+                // document.querySelector("#response").innerText = errorMsg;
+                alert(xhr.responseText);
+            }
+        });
+    }
+
+    function updateStonesInPits() {
+        tableTD.each(function (i) {
+            var cnt = $(this).has('a').find('a').data('initial-stone');
+            // console.log($(this))
+            // console.log($(this).has('a').find('a').data('initial-stone'))
+            $(this).has('a').find('a').html('');
+
+            for (var j = 0; j < cnt; j++) {
+                $(this).has('a').find('a').append(ballHTML);
+            }
+
+        })
+    }
+
+</script>
+
 </body>
 </html>
