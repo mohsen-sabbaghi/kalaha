@@ -1,19 +1,23 @@
 package com.bol.kalaha.model.entities;
 
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class GameTest {
 
     @Test
     public void getId() {
         Game game = new Game();
-        System.err.println("game.getId: "+game.getId());
-        System.err.println("game.getBoard: "+game.getBoard());
-        System.err.println("game.getTurn: "+game.getTurn());
-        System.err.println("game.getWinner: "+game.getWinner());
+        System.err.println("game.getId: " + game.getId());
+        System.err.println("game.getBoard: " + game.getBoard());
+        System.err.println("game.getTurn: " + game.getTurn());
+        System.err.println("game.getWinner: " + game.getWinner());
 
         assertNotNull(game.getId());
         assertNotNull(game.getBoard());

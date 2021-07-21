@@ -5,6 +5,7 @@ import com.bol.kalaha.model.entities.Game;
 import com.bol.kalaha.model.entities.Player;
 import com.bol.kalaha.model.exceptions.IllegalMoveException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,39 +32,39 @@ public class GameServiceTest {
     private Game gameTurnNorth;
     private Game gameTurnSouth;
 
-//    @Before
-//    public void init()
-//            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        this.gameInitial = new Game();
-//        this.gameFinishedWinnerSouth = new Game();
-//        this.gameFinishedWinnerNorth = new Game();
-//        this.gameNorthMovedFirst = new Game();
-//        this.gameSouthMovedFirst = new Game();
-//        this.gameTurnNorth = new Game();
-//        this.gameTurnSouth = new Game();
-//
-//        final Method resetBoard =
-//                openMethodForTest(service.getClass().getDeclaredMethod("resetBoard", Game.class));
-//        final Method distributeStones = openMethodForTest(
-//                service.getClass().getDeclaredMethod("distributeStones", Game.class, int.class));
-//
-//        resetBoard.invoke(this.service, this.gameFinishedWinnerSouth);
-//        this.gameFinishedWinnerSouth.getBoard().getPit(Player.PLAYER_NORTH.getHouseIndex())
-//                .setStoneCount(10);
-//        this.gameFinishedWinnerSouth.getBoard().getPit(Player.PLAYER_SOUTH.getHouseIndex())
-//                .setStoneCount(62);
-//        resetBoard.invoke(this.service, this.gameFinishedWinnerNorth);
-//        this.gameFinishedWinnerNorth.getBoard().getPit(1).setStoneCount(1);
-//        this.gameFinishedWinnerNorth.getBoard().getPit(Player.PLAYER_NORTH.getHouseIndex())
-//                .setStoneCount(39);
-//        this.gameFinishedWinnerNorth.getBoard().getPit(Player.PLAYER_SOUTH.getHouseIndex())
-//                .setStoneCount(32);
-//
-//        distributeStones.invoke(this.service, this.gameNorthMovedFirst, 1);
-//        distributeStones.invoke(this.service, this.gameSouthMovedFirst, 10);
-//        distributeStones.invoke(this.service, this.gameTurnNorth, 1);
-//        distributeStones.invoke(this.service, this.gameTurnSouth, 8);
-//    }
+    @Before
+    public void init()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        gameInitial = new Game();
+        gameFinishedWinnerSouth = new Game();
+        gameFinishedWinnerNorth = new Game();
+        gameNorthMovedFirst = new Game();
+        gameSouthMovedFirst = new Game();
+        gameTurnNorth = new Game();
+        gameTurnSouth = new Game();
+
+        final Method resetBoard =
+                openMethodForTest(service.getClass().getDeclaredMethod("resetBoard", Game.class));
+        final Method distributeStones = openMethodForTest(
+                service.getClass().getDeclaredMethod("distributeStones", Game.class, int.class));
+
+        resetBoard.invoke(service, gameFinishedWinnerSouth);
+        gameFinishedWinnerSouth.getBoard().getPit(Player.PLAYER_NORTH.getHouseIndex())
+                .setStoneCount(10);
+        gameFinishedWinnerSouth.getBoard().getPit(Player.PLAYER_SOUTH.getHouseIndex())
+                .setStoneCount(62);
+        resetBoard.invoke(service, gameFinishedWinnerNorth);
+        gameFinishedWinnerNorth.getBoard().getPit(1).setStoneCount(1);
+        gameFinishedWinnerNorth.getBoard().getPit(Player.PLAYER_NORTH.getHouseIndex())
+                .setStoneCount(39);
+        gameFinishedWinnerNorth.getBoard().getPit(Player.PLAYER_SOUTH.getHouseIndex())
+                .setStoneCount(32);
+
+        distributeStones.invoke(service, gameNorthMovedFirst, 1);
+        distributeStones.invoke(service, gameSouthMovedFirst, 10);
+        distributeStones.invoke(service, gameTurnNorth, 1);
+        distributeStones.invoke(service, gameTurnSouth, 8);
+    }
 
     @Test
     @DirtiesContext
@@ -77,8 +78,8 @@ public class GameServiceTest {
     @Test
     @DirtiesContext
     public void testPlay() {
-        final Game game = this.service.createGame();
-        this.service.play(game.getId(), 6);
+        final Game game = service.createGame();
+        service.play(game.getId(), 6);
 
         Assert.assertEquals(Player.PLAYER_SOUTH, game.getTurn());
         Assert.assertNull(game.getWinner());
@@ -87,9 +88,9 @@ public class GameServiceTest {
 
     @Test
     public void testDecidePlayerTurn() {
-        Assert.assertNull(this.gameInitial.getTurn());
-        Assert.assertEquals(Player.PLAYER_NORTH, this.gameNorthMovedFirst.getTurn());
-        Assert.assertEquals(Player.PLAYER_NORTH, this.gameSouthMovedFirst.getTurn());
+        Assert.assertNull(gameInitial.getTurn());
+        Assert.assertEquals(Player.PLAYER_NORTH, gameNorthMovedFirst.getTurn());
+        Assert.assertEquals(Player.PLAYER_NORTH, gameSouthMovedFirst.getTurn());
     }
 
     @Test
@@ -97,13 +98,13 @@ public class GameServiceTest {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         final Method determineWinner =
                 openMethodForTest(service.getClass().getDeclaredMethod("determineWinner", Game.class));
-        determineWinner.invoke(this.service, this.gameInitial);
-        determineWinner.invoke(this.service, this.gameFinishedWinnerSouth);
-        determineWinner.invoke(this.service, this.gameFinishedWinnerNorth);
+        determineWinner.invoke(service, gameInitial);
+        determineWinner.invoke(service, gameFinishedWinnerSouth);
+        determineWinner.invoke(service, gameFinishedWinnerNorth);
 
-        Assert.assertNull(this.gameInitial.getWinner());
-        Assert.assertEquals(Player.PLAYER_SOUTH, this.gameFinishedWinnerSouth.getWinner());
-        Assert.assertEquals(Player.PLAYER_NORTH, this.gameFinishedWinnerNorth.getWinner());
+        Assert.assertNull(gameInitial.getWinner());
+        Assert.assertEquals(Player.PLAYER_SOUTH, gameFinishedWinnerSouth.getWinner());
+        Assert.assertEquals(Player.PLAYER_NORTH, gameFinishedWinnerNorth.getWinner());
     }
 
     @Test
@@ -111,21 +112,21 @@ public class GameServiceTest {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         final Method checkGameOver =
                 openMethodForTest(service.getClass().getDeclaredMethod("checkGameOver", Game.class));
-        checkGameOver.invoke(this.service, this.gameInitial);
-        checkGameOver.invoke(this.service, this.gameFinishedWinnerSouth);
-        checkGameOver.invoke(this.service, this.gameFinishedWinnerNorth);
+        checkGameOver.invoke(service, gameInitial);
+        checkGameOver.invoke(service, gameFinishedWinnerSouth);
+        checkGameOver.invoke(service, gameFinishedWinnerNorth);
 
-        Assert.assertEquals(36, this.gameInitial.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
-        Assert.assertEquals(36, this.gameInitial.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
+        Assert.assertEquals(36, gameInitial.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
+        Assert.assertEquals(36, gameInitial.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
         Assert.assertEquals(10,
-                this.gameFinishedWinnerSouth.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
+                gameFinishedWinnerSouth.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
         Assert.assertEquals(62,
 
-                this.gameFinishedWinnerSouth.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
+                gameFinishedWinnerSouth.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
         Assert.assertEquals(40,
-                this.gameFinishedWinnerNorth.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
+                gameFinishedWinnerNorth.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
         Assert.assertEquals(32,
-                this.gameFinishedWinnerNorth.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
+                gameFinishedWinnerNorth.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -133,7 +134,7 @@ public class GameServiceTest {
         try {
             final Method validateMove = openMethodForTest(
                     service.getClass().getDeclaredMethod("validateMove", Game.class, int.class));
-            validateMove.invoke(this.service, this.gameTurnNorth, 12);
+            validateMove.invoke(service, gameTurnNorth, 12);
         } catch (final Exception e) {
             if (e instanceof InvocationTargetException) {
                 throw ((InvocationTargetException) e).getTargetException();
@@ -148,7 +149,7 @@ public class GameServiceTest {
         try {
             final Method validateMove = openMethodForTest(
                     service.getClass().getDeclaredMethod("validateMove", Game.class, int.class));
-            validateMove.invoke(this.service, this.gameTurnSouth, 1);
+            validateMove.invoke(service, gameTurnSouth, 1);
         } catch (final Exception e) {
             if (e instanceof InvocationTargetException) {
                 throw ((InvocationTargetException) e).getTargetException();
@@ -163,7 +164,7 @@ public class GameServiceTest {
         try {
             final Method validateMove = openMethodForTest(
                     service.getClass().getDeclaredMethod("validateMove", Game.class, int.class));
-            validateMove.invoke(this.service, this.gameTurnNorth, 1);
+            validateMove.invoke(service, gameTurnNorth, 1);
         } catch (final Exception e) {
             if (e instanceof InvocationTargetException) {
                 throw ((InvocationTargetException) e).getTargetException();
@@ -178,7 +179,7 @@ public class GameServiceTest {
         try {
             final Method validateMove = openMethodForTest(
                     service.getClass().getDeclaredMethod("validateMove", Game.class, int.class));
-            validateMove.invoke(this.service, this.gameInitial, Player.PLAYER_NORTH.getHouseIndex());
+            validateMove.invoke(service, gameInitial, Player.PLAYER_NORTH.getHouseIndex());
         } catch (final Exception e) {
             if (e instanceof InvocationTargetException) {
                 throw ((InvocationTargetException) e).getTargetException();
@@ -196,16 +197,16 @@ public class GameServiceTest {
         final Method lastEmptyPit = openMethodForTest(
                 service.getClass().getDeclaredMethod("lastEmptyPit", Game.class, int.class));
 
-        resetBoard.invoke(this.service, this.gameTurnNorth);
-        this.gameTurnNorth.getBoard().getPit(Player.PLAYER_NORTH.getHouseIndex()).setStoneCount(0);
-        this.gameTurnNorth.getBoard().getPit(Player.PLAYER_SOUTH.getHouseIndex()).setStoneCount(0);
-        this.gameTurnNorth.getBoard().getPit(4).setStoneCount(1);
-        this.gameTurnNorth.getBoard().getPit(10).setStoneCount(6);
+        resetBoard.invoke(service, gameTurnNorth);
+        gameTurnNorth.getBoard().getPit(Player.PLAYER_NORTH.getHouseIndex()).setStoneCount(0);
+        gameTurnNorth.getBoard().getPit(Player.PLAYER_SOUTH.getHouseIndex()).setStoneCount(0);
+        gameTurnNorth.getBoard().getPit(4).setStoneCount(1);
+        gameTurnNorth.getBoard().getPit(10).setStoneCount(6);
 
-        lastEmptyPit.invoke(this.service, this.gameTurnNorth, 4);
+        lastEmptyPit.invoke(service, gameTurnNorth, 4);
 
-        Assert.assertEquals(7, this.gameTurnNorth.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
-        Assert.assertEquals(0, this.gameTurnNorth.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
+        Assert.assertEquals(7, gameTurnNorth.getBoard().getStoneCount(Player.PLAYER_NORTH, true));
+        Assert.assertEquals(0, gameTurnNorth.getBoard().getStoneCount(Player.PLAYER_SOUTH, true));
     }
 
     @Test
@@ -213,8 +214,8 @@ public class GameServiceTest {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         final Method validateMove = openMethodForTest(
                 service.getClass().getDeclaredMethod("validateMove", Game.class, int.class));
-        validateMove.invoke(this.service, this.gameInitial, 1);
-        Assert.assertEquals(Player.PLAYER_NORTH, this.gameInitial.getTurn());
+        validateMove.invoke(service, gameInitial, 1);
+        Assert.assertEquals(Player.PLAYER_NORTH, gameInitial.getTurn());
     }
 
     @Test
@@ -222,8 +223,8 @@ public class GameServiceTest {
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         final Method validateMove = openMethodForTest(
                 service.getClass().getDeclaredMethod("validateMove", Game.class, int.class));
-        validateMove.invoke(this.service, this.gameInitial, 13);
-        Assert.assertEquals(Player.PLAYER_SOUTH, this.gameInitial.getTurn());
+        validateMove.invoke(service, gameInitial, 13);
+        Assert.assertEquals(Player.PLAYER_SOUTH, gameInitial.getTurn());
     }
 
     private Method openMethodForTest(final Method method) {
