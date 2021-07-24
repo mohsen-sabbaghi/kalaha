@@ -98,11 +98,11 @@
 
 <table>
     <tr>
-        <td class="house-pit" id="14">P2-HOUSE<a href="#"></a></td>
+        <td class="house-pit" id="14">NORTH-HOUSE<a href="#"></a></td>
         <td colspan="7"></td>
     </tr>
 
-    <tr id="player2">
+    <tr id="player_north">
         <td></td>
         <td id="13"><a data-initial-stone="6" href="#"></a></td>
         <td id="12"><a data-initial-stone="6" href="#"></a></td>
@@ -112,7 +112,7 @@
         <td id="8"><a data-initial-stone="6" href="#"></a></td>
 
     </tr>
-    <tr id="player1">
+    <tr id="player_south">
         <td></td>
         <td id="1"><a data-initial-stone="6" href="#"></a></td>
         <td id="2"><a data-initial-stone="6" href="#"></a></td>
@@ -125,7 +125,7 @@
 
     <tr>
         <td colspan="7"></td>
-        <td class="house-pit" id="7">P1-HOUSE: <a href="#"></a></td>
+        <td class="house-pit" id="7">SOUTH-HOUSE: <a href="#"></a></td>
     </tr>
 </table>
 <br>
@@ -149,7 +149,8 @@
                 $("#response").html(CURRENT_GAME_ID)
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.responseText);
+                let errorMessage = JSON.parse(xhr.responseText);
+                $("#response").html(errorMessage.message)
             }
         });
     }
@@ -157,21 +158,16 @@
     $(document).ready(function () {
         //Perform Ajax request.
         initialGame();
-
-        tableTD.click(
-            function () {
-                $('td#' + $(this).attr('id')).each(function () {
-                    console.log($(this).attr('id'));
-                    // console.log($(this).text());
-                    updateScores($(this).attr('id'));
-                    updateStonesInPits()
-                });
-            }
-        );
-
-        updateStonesInPits();
-
     });
+
+    tableTD.click(
+        function () {
+            $('td#' + $(this).attr('id')).each(function () {
+                updateScores($(this).attr('id'));
+                updateStonesInPits()
+            });
+        }
+    );
 
     function updateScores(id) {
         $.ajax({
@@ -189,7 +185,8 @@
             error: function (xhr, ajaxOptions, thrownError) {
                 // var errorMsg = 'Ajax request failed: ' + xhr.responseText;
                 // document.querySelector("#response").innerText = errorMsg;
-                alert(xhr.responseText);
+                let errorMessage = JSON.parse(xhr.responseText);
+                alert(errorMessage.message);
             }
         });
     }
@@ -207,6 +204,10 @@
 
         })
     }
+
+    $( document ).ajaxComplete(function() {
+        updateStonesInPits();
+    });
 
 </script>
 
