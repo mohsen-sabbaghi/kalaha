@@ -30,7 +30,6 @@ public class GameServiceImpl implements GameService {
         return CURRENT_GAME;
     }
 
-
     private void distributeStones(final Game game, int pitId) {
         final Pit startPit = game.getBoard().getPit(pitId);
         validateMove(game, pitId);
@@ -72,8 +71,7 @@ public class GameServiceImpl implements GameService {
 
     private void lastEmptyPit(final Game game, final int endPitId) {
         final Pit endPit = game.getBoard().getPit(endPitId);
-        if (!endPit.isHouse() && endPit.getOwner().equals(game.getTurn())
-                && (endPit.getStoneCount() == 1)) {
+        if (!endPit.isHouse() && endPit.getOwner().equals(game.getTurn()) && (endPit.getStoneCount() == 1)) {
             final Pit oppositePit = game.getBoard().getPit(Board.PIT_END_INDEX - endPit.getId());
             if (oppositePit.getStoneCount() > 0) {
                 final Pit house = game.getBoard().getPit(endPit.getOwner().getHouseIndex());

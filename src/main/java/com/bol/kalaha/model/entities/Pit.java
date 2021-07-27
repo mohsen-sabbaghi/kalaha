@@ -1,7 +1,6 @@
 package com.bol.kalaha.model.entities;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class Pit {
