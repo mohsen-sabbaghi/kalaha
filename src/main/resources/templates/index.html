@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Kalah Game</title>
     <script src="webjars/jquery/3.3.1-1/jquery.js"></script>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.png}"/>
     <style>
         .welcome-text {
             text-align: center
@@ -132,8 +133,9 @@
 <div class="result"></div>
 
 <script th:inline="javascript">
-    var CURRENT_GAME_ID;
-    var tableTD = $('td');
+    let HOST = document.location["origin"];
+    let CURRENT_GAME_ID;
+    const tableTD = $('td');
     const ballHTML = '<section class="stage">\n' +
         '  <figure class="ball">\n' +
         '    <span class="shadow"></span>\n' +
@@ -141,8 +143,9 @@
         '</section>';
 
     function initialGame() {
+        console.log(HOST+'/games')
         $.ajax({
-            url: 'http://localhost:8080/games',
+            url: HOST + '/games',
             type: 'post',
             success: function (data) {
                 CURRENT_GAME_ID = data.id;
@@ -171,7 +174,7 @@
 
     function updateScores(id) {
         $.ajax({
-            url: 'http://localhost:8080/games/' + CURRENT_GAME_ID + "/pits/" + id,
+            url: HOST + '/games/' + CURRENT_GAME_ID + "/pits/" + id,
             type: 'put',
             dataType: "json",
             success: function (data) {
@@ -179,7 +182,7 @@
                 $.each(data.status, function (i, item) {
                     // console.log(i + ": ", item)
                     // elem.find('a').data('initial-stone',item).html(item);
-                    $('td#' + i).find('a').data('initial-stone',item);
+                    $('td#' + i).find('a').data('initial-stone', item);
                 });
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -205,7 +208,7 @@
         })
     }
 
-    $( document ).ajaxComplete(function() {
+    $(document).ajaxComplete(function () {
         updateStonesInPits();
     });
 
