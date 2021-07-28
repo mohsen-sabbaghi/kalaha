@@ -1,1 +1,1 @@
-web: java -jar target/kalaha.war --server.port=$PORT
+web: java -jar target/Kalaha.war --server.port=$PORT
